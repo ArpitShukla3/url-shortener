@@ -5,6 +5,12 @@ const app=express();
 const route=require("./Router/Router.js")
 const cors=require("cors");
 const urlEncoded = express.urlencoded;
+const PORT=process.env.PORT;
+
+
+app.listen(PORT,()=>{
+    console.log("server is listening at port "+PORT);
+  }); 
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors(
