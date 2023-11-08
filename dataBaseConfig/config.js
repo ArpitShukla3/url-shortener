@@ -1,11 +1,17 @@
 const mongoose=require("mongoose");
+require("dotenv").config();
+const options={
+    useNewUrlParser: true,
+    useUnifiedTopology: true 
+}
 const connect=async ()=>
 {
-    try {
-        await mongoose.connect("mongodb://127.0.0.1:27017/url?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.10.3")
+    const mongodb_atlas_url=process.env.mongodb_atlas_url;
+    try { 
+        await mongoose.connect(mongodb_atlas_url)
         console.log("connected");
-    } catch (error) {
-        console.log("Error occurred due to"+error);
+    } catch (error) { 
+        console.log("Error occurred due to  "+error);
     }
-}
-module.exports=connect;
+} 
+module.exports=connect;    

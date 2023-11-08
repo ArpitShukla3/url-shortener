@@ -1,3 +1,5 @@
+//requiring DevDependecies
+const axios =require("axios");
 const connectDataBase=require("../dataBaseConfig/config.js");
 connectDataBase();
 require("dotenv").config();
@@ -5,34 +7,55 @@ const mongoose=require('mongoose');
 const Schema=require("../Schema/shema.js")
 const isUrlValid = require('url-validation');
 const opener=require("openurl");
-const  short=async(req,res,next)=>{
+const backendPort="http://localhost:5001";
+const  short=async(req,res)=>{
+    credentials: "include"
    try {
-    const {url, str}=req.body;
-    if(!url ||! str)
+    const {longUrl}=req.body;
+    //if Url is absent in request body 
+    if(!longUrl)
     {
-        return res.status(400).json({
+        return res.status(401).json({
             success:false,
-            message:"All fields are compulsory"
+            message:"Url missing"
         })
     }
-    if(!isUrlValid(url))
-    {
-        return res.status(400).json({
-            success:false,
-            message:"Url is invalid"
-        })
-    }
+ 
+   //validating website
+//    const validMail= await axios.get(longUrl);
+     //if str is already present then update the previoius entry
+     
+   if(await Schema.findOne({url:longUrl,email:req.email}))
+   {
+    try{
+      const checks= await Schema.findOneAndUpdate({url:longUrl},{new:true})
+        return res.status(200).json({
+            success:true,
+            message:"done using update ",
+            shortUrl: checks.shortUrl
+         })
+        }
+
+       catch(err){
+            return res.status(405).json({
+                success:false,
+                message: "error : "+err
+            })
+        } 
+   }
+   const index=await Schema.find().count();
      const dataobj=new Schema({
-        url:url,
-        shortUrl:"http://localhost:5001/short/get/"+str.trim()
+        url:longUrl,
+        shortUrl:`${backendPort}/short/open/`+ index,
+        email:req.email
      })
      const result=await dataobj.save();
        return res.status(200).json({
         success:true,
-        message:result
+        shortUrl:`${backendPort}/short/open/`+index
        })
    } catch (error) {
-    return res.status(400).json({
+    return res.status(406).json({
         success:false,
         message:"error is due to : "+error
     })
@@ -41,26 +64,55 @@ const  short=async(req,res,next)=>{
 }
 const openUrl=async(req,res,next)=>
 {
-   
    try {
+    
     const shortUrl= req.protocol + '://' + req.get('host') + req.originalUrl;
-    let element="";
-    const data=Schema.findOne({shortUrl}).then(val=>{opener.open(val.url)})
-    return res.status(200).json({
-        success:true,
-        message:"done"
-    })
+    const data=await Schema.findOne({shortUrl:shortUrl, email:req.email}).then(async(val)=>{
+        if(val)
+        {
+            try{
+                await res.redirect(307,val.url);
+            }
+            catch(error)
+            {
+                console.log("error : "+error);
+            }
+        }
+        else
+        {
+            return res.status(400).json({
+                success:false,
+                message:"short url is invalid/ url is not found"
+            })
+        }
+    }
+    )
    }
-    catch (error) {
+    catch (error) {   
     return res.status(400).json({
         success:false,
         message:"error occurred due to : "+error
     }) 
    }
 }
-module.exports={short, openUrl};
+const showData=async(req,res)=>{
+   try {    
+    const data= await Schema.find({email:req.email});
+    return res.status(200).json({
+        success:true,
+        data:data
+    })
+   } catch (error) {
+    return res.status(403).json({
+        success:false,
+        message:"error is in show block in showData function"+error.message
+    })
+   }
+}
+
+module.exports={short, openUrl, showData};   
   
 
 
-
+ 
 

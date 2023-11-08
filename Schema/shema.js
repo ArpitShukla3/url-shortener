@@ -8,11 +8,15 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true,
         createdDate: Date.now
+    },
+    email:{
+        type:String,
+        required:true
     }
 
 })
 
 
-
+ 
 const model=mongoose.model("urlData",userSchema);
 module.exports=model;
