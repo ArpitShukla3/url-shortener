@@ -1,12 +1,10 @@
 //requiring DevDependecies
-const axios =require("axios");
 const connectDataBase=require("../dataBaseConfig/config.js");
 connectDataBase();
 require("dotenv").config();
 const mongoose=require('mongoose');
 const Schema=require("../Schema/shema.js")
 const isUrlValid = require('url-validation');
-const opener=require("openurl");
 const backendPort="http://localhost:5001";
 const  short=async(req,res)=>{
     credentials: "include"
@@ -21,9 +19,6 @@ const  short=async(req,res)=>{
         })
     }
  
-   //validating website
-//    const validMail= await axios.get(longUrl);
-     //if str is already present then update the previoius entry
      
    if(await Schema.findOne({url:longUrl,email:req.email}))
    {
