@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(cors(
   {
-    origin:"https://url-frontend-snowy.vercel.app/",
+    origin:"*",
    credentials:true
 }
 ));
