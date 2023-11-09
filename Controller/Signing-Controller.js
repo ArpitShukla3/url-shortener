@@ -100,7 +100,8 @@ const jwt = require("jsonwebtoken")
               secure:true, 
               sameSite: 'None'
           }
-          res.cookie ("token",token,cookieOptions)
+          res.cookie ("token",token,cookieOptions);
+       //    res.clear
           return res.status(200).json({ 
           success:true,     
            data:user   

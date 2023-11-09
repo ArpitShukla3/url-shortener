@@ -77,7 +77,7 @@ const openUrl=async(req,res,next)=>
         {
             return res.status(400).json({
                 success:false,
-                message:"short url is invalid/ url is not found"
+                message:"short url is invalid/ url is not found :"+shortUrl
             })
         }
     }
