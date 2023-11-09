@@ -61,7 +61,7 @@ const openUrl=async(req,res,next)=>
 {
    try {
     
-    const shortUrl= req.protocol + '://' + req.get('host') + req.originalUrl;
+    const shortUrl= req.protocol + 's://' + req.get('host') + req.originalUrl;
     const data=await Schema.findOne({shortUrl:shortUrl, email:req.email}).then(async(val)=>{
         if(val)
         {
@@ -77,7 +77,7 @@ const openUrl=async(req,res,next)=>
         {
             return res.status(400).json({
                 success:false,
-                message:"short url is invalid/ url is not found :"+shortUrl
+                message:"short url is invalid/ url is not found :"+shortUrl+"  "+req.email
             })
         }
     }
